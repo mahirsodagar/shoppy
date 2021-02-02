@@ -1,0 +1,187 @@
+{% extends 'base.html' %} {% block container %}
+<div class="container category-container">
+  <div class="d-flex flex-wrap my-3">
+    {% for category in categories%}
+    <a
+      class="{% if forloop.counter > 4 %} d-none {% else %} m-1 category d-flex flex-row flex-grow-1 align-items-center mx-2 {% if selectedCategoryId == category.id %} active-class {% else %} {% endif %} {% endif %}"
+      href="?category={{category.id}}"
+      disabled="{% if selectedCategoryId == category.id %}disabled{% else %} {% endif %}"
+    >
+      <div class="circle d-flex justify-content-center align-items-center">
+        <img
+          src="{{category.image.url}}"
+          class="category-img animation-element img-fluid"
+          alt="..."
+        />
+      </div>
+      <div class="d-flex justify-content-center align-items-center">
+        <h5 class="category-name">{{category.name}}</h5>
+      </div>
+    </a>
+    {% endfor %}
+    <div
+      id="categoryCollapse"
+      class="collapse {% if selectedCategoryId > 4 %} collapse show {% else %} {% endif %} flex-grow-1"
+    >
+      <div class="d-flex flex-wrap">
+        {% for category in categories%}
+        <a
+          class="{% if forloop.counter <= 4 %} d-none {% else %} m-1 category d-flex flex-row flex-grow-1 align-items-center mx-2 {% endif %} {% if selectedCategoryId == category.id %} active-class {% else %} {% endif %}"
+          href="?category={{category.id}}"
+          disabled="{% if selectedCategoryId == category.id %}disabled{% else %} {% endif %}"
+        >
+          <div class="circle d-flex justify-content-center align-items-center">
+            <img
+              src="{{category.image.url}}"
+              class="category-img animation-element img-fluid"
+              alt="..."
+            />
+          </div>
+          <div class="d-flex justify-content-center align-items-center">
+            <h5 class="category-name">{{category.name}}</h5>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <p
+    class="collapseCategory collapsed px-2 {% if categories.count > 4 %} d-block {% else %} d-none {% endif %}"
+    data-toggle="collapse"
+    aria-expanded="{% if selectedCategoryId > 4 %} true {% else %} false {% endif %}"
+    data-target="#categoryCollapse"
+  >
+    <span
+      class="moreCategory align-items-center {% if selectedCategoryId > 4 %} d-none {% else %} d-flex {% endif %}"
+    >
+      View More Category <i class="mx-2 fa fa-chevron-circle-down"></i>
+    </span>
+    <span
+      class="lessCategory align-items-center {% if selectedCategoryId <= 4 %} d-none {% else %} d-flex {% endif %}"
+    >
+      View Less Category <i class="mx-2 fa fa-chevron-circle-up"></i>
+    </span>
+  </p>
+</div>
+<div class="container p-3 mb-5">
+  <div class="row my-3">
+    {% for product in products%}
+    <div class="col-6 col-sm-6 col-md-3 col-lg-3 col-xl-3 item pb-3 px-2 item">
+      <div class="card shadow product">
+        <div class="d-flex justify-content-center">
+          <img
+            src="{{product.image.url}}"
+            class="card-img-top animation-element img-fluid card-img"
+            alt="..."
+          />
+        </div>
+        <div class="card-body">
+          <div>
+            <h5 class="item-title1">{{product.name}}</h5>
+            <p class="item-description mb-1">{{product.description}}</p>
+          </div>
+          <div>
+            <div class="row m-0">
+              <div class="col-6 p-0 d-flex align-items-center">
+                <h1 class="item-price d-flex align-items-center mb-0 pb-0">
+                  ₹{{product.price}}
+                </h1>
+              </div>
+              <div class="col-6 d-flex justify-content-center p-0">
+                <div class="ml-auto">
+                  <div
+                    onclick="addToCart({{product.id}})"
+                    class="itemsquare d-flex justify-content-center align-items-center"
+                    style="height: 30px; width: 30px"
+                  >
+                    <i class="fa fa-cart-plus"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{%endblock%} {% block script %}
+<script>
+  const footerCart = document.getElementById("footer-cart");
+  const cartContainer = document.getElementById("cart-container");
+  const cartTotalMd = document.getElementById("totalCart-md");
+  const cartTotalSm = document.getElementById("totalCart-sm");
+  const data = JSON.parse("{{jsonProducts|escapejs}}");
+  const carts = JSON.parse(localStorage.getItem("cartdata"));
+
+  const addToCart = (id) => {
+    const localCart = JSON.parse(localStorage.getItem("cartdata"));
+    let product = data.find((p) => p.pk === id);
+    product.fields.quantity = 1;
+    const isFoundItem =
+      localCart && localCart.findIndex((p) => p.pk === product.pk);
+    let carts = [];
+    if (localCart && isFoundItem >= 0) {
+      let localProduct = localCart.find((p) => p.pk === id);
+      carts = localCart;
+      const qty = localProduct.fields.quantity;
+      const total = qty ? qty + 1 : 1;
+      localProduct = {
+        ...localProduct,
+        fields: { ...product.fields, quantity: total },
+      };
+      localCart[isFoundItem] = localProduct;
+      carts = localCart;
+    } else {
+      carts = localCart ? [product, ...localCart] : [product];
+    }
+    localStorage.setItem("cartdata", JSON.stringify(carts));
+    displayCart(carts);
+  };
+  const displayCart = (allCart = carts) => {
+    if (allCart) {
+      footerCart.style.display = "flex";
+      cartContainer.classList.remove("d-none");
+      cartContainer.classList.add("d-flex");
+    } else {
+      footerCart.style.display = "none";
+      cartContainer.classList.remove("d-flex");
+      cartContainer.classList.add("d-none");
+    }
+
+    footerCart.innerHTML = "";
+    allCart?.forEach((p, i) => {
+      footerCart.innerHTML += `
+          <div class="footer-square1 mr-3 cart-item-informer animation-element ${
+            i >= 5 ? "d-none" : "d-none d-md-block "
+          }">
+            <div class="footer-circle d-flex justify-content-center align-items-center">
+              <h1 class="footer-cart-item  mb-0 pb-0">${p.fields.quantity}</h1>
+            </div>
+            <div class="d-flex justify-content-center align-items-center ">
+              <img src="/product/${
+                p.fields.image
+              }" class="react-reveal footer-img" alt="footer-img">
+            </div>
+          </div>
+           <div class="footer-square1 mr-3 cart-item-informer animation-element ${
+             i >= 3 ? "d-none" : "d-block d-md-none "
+           }">
+            <div class="footer-circle d-flex justify-content-center align-items-center">
+              <h1 class="footer-cart-item  mb-0 pb-0">1</h1>
+            </div>
+            <div class="d-flex justify-content-center align-items-center ">
+              <img src="/product/${
+                p.fields.image
+              }" class="react-reveal footer-img" alt="footer-img">
+            </div>
+          </div>
+          `;
+      cartTotalMd.innerText = i >= 5 ? `+${i - 4}` : "";
+      cartTotalSm.innerText = i >= 3 ? `+${i - 2}` : "";
+    });
+  };
+  displayCart();
+</script>
+{%endblock%}

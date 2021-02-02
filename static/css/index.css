@@ -1,0 +1,122 @@
+body {
+  background: #fffbf8;
+}
+.nav-link.active {
+  color: #df0e57 !important;
+}
+.category.active-class {
+  background: #df0e57 !important;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16) !important;
+}
+.category-name {
+  margin: 0;
+  color: black;
+  font-size: 25px;
+  padding: 0 10px;
+  font-family: MuliBOld;
+  /* padding-top: 20px; */
+  text-align: center;
+  word-break: break-word;
+  overflow: hidden;
+}
+.active-class .category-name {
+  color: white;
+}
+.category {
+  display: flex !important;
+  background-color: #ffedee;
+  border-radius: 100px;
+  padding: 10px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16) !important;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-border-radius: 100px;
+  -moz-border-radius: 100px;
+  -ms-border-radius: 100px;
+  -o-border-radius: 100px;
+  flex-direction: row !important;
+  align-items: center !important;
+  /* justify-content: center !important; */
+}
+
+.circle {
+  height: 60px;
+  width: 60px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 64px;
+  overflow: hidden;
+  -webkit-border-radius: 64px;
+  -moz-border-radius: 64px;
+  -ms-border-radius: 64px;
+  -o-border-radius: 64px;
+}
+.category-img {
+  height: 100% !important;
+  width: 100% !important;
+}
+.card-img {
+  width: 200px;
+  background-size: cover;
+  width: -webkit-fill-available;
+  max-height: 215px;
+  min-height: 215px;
+  border-top-right-radius: 15px;
+  border-top-left-radius: 15px;
+}
+.item-title1 {
+  color: #130f49;
+  font-family: MuliBold;
+  height: 36px;
+}
+.item-description {
+  color: #b2b2b2;
+  font-size: 16px;
+  font-family: MuliRegular;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.item > .card {
+  border: none !important;
+  border-radius: 15px !important;
+  -webkit-border-radius: 15px !important;
+  -moz-border-radius: 15px !important;
+  -ms-border-radius: 15px !important;
+  -o-border-radius: 15px !important;
+}
+.item-price {
+  color: #df0e57;
+  font-size: 27px;
+  font-family: MuliBold;
+}
+@media (max-width: 991.98px) {
+  .item-price {
+    font-size: 17px;
+    margin-bottom: 0;
+  }
+  .card-img {
+    max-height: 150px;
+    min-height: 150px;
+  }
+  .item-title1 {
+    font-size: 13px;
+    margin-bottom: 0;
+  }
+  .item-description {
+    font-size: 10px;
+    margin-bottom: 0;
+  }
+  .category-name {
+    font-size: 20px;
+    /* padding-top: 10px; */
+  }
+  .circle {
+    height: 54px !important;
+    width: 54px !important;
+  }
+  .category {
+    /* height: 113px !important;
+    width: 72px !important; */
+    padding: 10px;
+  }
+}

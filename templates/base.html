@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+      integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      body {
+        background: #ffd39c73;
+      }
+      .nav-link.active {
+        color: #ff8e00 !important;
+      }
+      .category.active-class {
+        background: #ff8e00 !important;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16) !important;
+      }
+      .collapseCategory[aria-expanded="false"] .lessCategory {
+        display: none !important;
+      }
+      .collapseCategory[aria-expanded="false"] .moreCategory {
+        display: flex !important;
+      }
+      .collapseCategory[aria-expanded="true"] .moreCategory {
+        display: none !important;
+      }
+      .collapseCategory[aria-expanded="true"] .lessCategory {
+        display: flex !important;
+      }
+      .collapseCategory {
+        color: #130f49;
+        font-size: 22px;
+        font-family: MuliBOld;
+      }
+      .category-name {
+        margin: 0;
+        color: black;
+        font-size: 20px;
+        padding: 0 10px;
+        font-family: MuliBOld;
+        /* padding-top: 20px; */
+        text-align: center;
+        word-break: break-word;
+        overflow: hidden;
+      }
+      .category-container {
+        overflow: auto;
+        background: #ffebd2;
+        position: sticky;
+        top: -3px;
+        z-index: 1;
+      }
+
+      .active-class .category-name {
+        color: white;
+      }
+      .category {
+        min-width: fit-content;
+        display: flex !important;
+        background-color: #ff8e0063;
+        border-radius: 100px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16) !important;
+        cursor: pointer;
+        text-decoration: none !important;
+        -webkit-border-radius: 100px;
+        -moz-border-radius: 100px;
+        -ms-border-radius: 100px;
+        -o-border-radius: 100px;
+        flex-direction: row !important;
+        align-items: center !important;
+      }
+      a[disabled="disabled"] {
+        pointer-events: none;
+      }
+      .circle {
+        height: 50px;
+        width: 50px;
+        background-color: rgb(255, 255, 255);
+        border-radius: 64px;
+        overflow: hidden;
+        -webkit-border-radius: 64px;
+        -moz-border-radius: 64px;
+        -ms-border-radius: 64px;
+        -o-border-radius: 64px;
+      }
+      .category-img {
+        height: 100% !important;
+        width: 100% !important;
+        border-radius: 50px;
+      }
+      .fa-cart-plus {
+        color: #ff8e00;
+        font-size: 22px;
+      }
+      .itemsquare {
+        cursor: pointer;
+        border-radius: 50px;
+        padding: 10px;
+        background: #19164ab5;
+      }
+      .card-img {
+        width: 200px;
+        background-size: cover;
+        width: -webkit-fill-available;
+        max-height: 215px;
+        min-height: 215px;
+        border-top-right-radius: 15px;
+        border-top-left-radius: 15px;
+      }
+      .animation-element {
+        animation: zoominoutsinglefeatured 0.7s ease-out;
+      }
+      .footer-cart {
+        position: fixed;
+        bottom: 0;
+        border-top-left-radius: 50px;
+        border-top-right-radius: 50px;
+        margin: 0 !important;
+        padding: 10px;
+        background: #ffb55882;
+        width: 100%;
+        z-index: 1;
+      }
+
+      @keyframes zoominoutsinglefeatured {
+        0% {
+          transform: scale(0.1, 0.1);
+        }
+        100% {
+          transform: scale(1, 1);
+        }
+      }
+      .item-title1 {
+        color: #130f49;
+        font-family: MuliBold;
+        height: 36px;
+      }
+      .cartBtn {
+        margin: auto 0 auto 0;
+        border: 0;
+        min-width: 80px;
+        display: flex;
+        justify-content: center;
+        font-size: 22px;
+        padding: 5px 0;
+      }
+      .item-description {
+        color: #b2b2b2;
+        font-size: 16px;
+        font-family: MuliRegular;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .item > .card {
+        border: none !important;
+        border-radius: 15px !important;
+        -webkit-border-radius: 15px !important;
+        -moz-border-radius: 15px !important;
+        -ms-border-radius: 15px !important;
+        -o-border-radius: 15px !important;
+      }
+      .item:nth-child(3n + 0) > .product {
+        background-color: #ffc7a391 !important;
+      }
+      .item:nth-child(3n + 1) > .product {
+        background-color: #dbc7b9cc !important;
+      }
+      .item:nth-child(3n + 2) > .product {
+        background-color: #4abcac40 !important;
+      }
+      .item-price {
+        color: #ff8e00;
+        font-size: 27px;
+        font-family: MuliBold;
+      }
+
+      .footer-square1 {
+        height: 66px;
+        width: 66px;
+        background: #ffedee;
+        padding: 5px;
+        position: relative;
+        border-radius: 50px;
+      }
+      .footer-circle {
+        width: 30px;
+        height: 30px;
+        background: #ff8e00;
+        position: absolute;
+        right: -8px;
+        top: -3px;
+        z-index: 1;
+        border-radius: 50px;
+      }
+      .footer-cart-item {
+        font-size: 16px;
+      }
+      .footer-img {
+        height: 58px;
+        width: 55px;
+        padding: 0;
+        border-radius: 50px;
+      }
+      @media (max-width: 991.98px) {
+        .item-price {
+          font-size: 17px;
+          margin-bottom: 0;
+        }
+        .card-img {
+          max-height: 150px;
+          min-height: 150px;
+        }
+        .item-title1 {
+          font-size: 13px;
+          margin-bottom: 0;
+        }
+        .item-description {
+          font-size: 10px;
+          margin-bottom: 0;
+        }
+        .category-name {
+          font-size: 20px;
+          /* padding-top: 10px; */
+        }
+        .circle {
+          height: 54px;
+          width: 54px;
+        }
+        .category {
+          /* height: 113px !important;
+          width: 72px !important; */
+        }
+      }
+      @media (max-width: 767px) {
+        .circle {
+          height: 45px;
+          width: 45px;
+        }
+        .footer-img {
+          height: 46px;
+          width: 47px;
+        }
+        .footer-circle {
+          width: 25px;
+          height: 25px;
+        }
+        .footer-cart-item {
+          font-size: 14px;
+        }
+        .footer-square1 {
+          width: 55px;
+          height: 55px;
+        }
+        .footer-cart {
+          border-top-right-radius: 30px;
+          border-top-left-radius: 30px;
+        }
+      }
+      @media (max-width: 576px) {
+        .category-name {
+          font-size: 14px;
+          margin-bottom: 0;
+        }
+        .circle {
+          height: 45px;
+          width: 45px;
+        }
+        .collapseCategory {
+          font-size: 17px;
+        }
+        .circle {
+          height: 35px;
+          width: 35px;
+        }
+        .footer-img {
+          height: 32px;
+          width: 32px;
+        }
+        .footer-circle {
+          width: 20px;
+          height: 20px;
+        }
+        .footer-cart-item {
+          font-size: 10px;
+        }
+        .footer-square1 {
+          width: 40px;
+          height: 40px;
+        }
+        .footer-cart {
+          border-top-right-radius: 30px;
+          border-top-left-radius: 30px;
+        }
+      }
+    </style>
+    <link rel="icon" href="static/assets/favicon.jpg" type="image/icon type" />
+    {% comment %}
+    <link rel="stylesheet" href="static/css/index.css" />
+    {% endcomment %}
+    <title>Shoppy</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-light">
+      <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+          <img
+            src="static/assets/favicon.jpg"
+            alt=""
+            width="50px"
+            class="d-inline-block align-top img-fluid animation-element"
+            style="filter: hue-rotate(-56deg)"
+          />
+          <span class="mx-1">Shoppy</span>
+        </a>
+        <div class="">
+          <ul class="navbar-nav d-flex flex-row">
+            <li class="nav-item mx-1">
+              <a class="nav-link active" aria-current="page" href="#">Home</a>
+            </li>
+            <li class="nav-item mx-1">
+              <a class="nav-link" href="#">Orders</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="footer-cart d-none my-2" id="cart-container">
+      <div id="footer-cart"></div>
+      <div class="d-flex align-items-center justify-content-center">
+        <h3 class="d-none d-md-block" id="totalCart-md">+4</h3>
+      </div>
+      <div class="d-flex align-items-center justify-content-center">
+        <h3 class="d-block d-md-none" id="totalCart-sm">+3</h3>
+      </div>
+      <button class="ml-auto category cartBtn active-class">Cart</button>
+    </div>
+    {% block container %}{% endblock %}
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+      integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+      integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+      crossorigin="anonymous"
+    ></script>
+    {% block script %}{% endblock %}
+  </body>
+</html>
