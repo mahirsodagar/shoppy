@@ -88,7 +88,7 @@
                 </h1>
               </div>
               <div class="col-6 d-flex justify-content-center p-0">
-                <div class="ml-auto">
+                <div class="ml-auto" id="product-{{product.id}}">
                   <div
                     onclick="addToCart({{product.id}})"
                     class="itemsquare d-flex justify-content-center align-items-center"
@@ -131,7 +131,8 @@
         ...localProduct,
         fields: { ...product.fields, quantity: total },
       };
-      localCart[isFoundItem] = localProduct;
+      localCart.splice(isFoundItem, 1);
+      localCart.unshift(localProduct);
       carts = localCart;
     } else {
       carts = localCart ? [product, ...localCart] : [product];
@@ -139,8 +140,54 @@
     localStorage.setItem("cartdata", JSON.stringify(carts));
     displayCart(carts);
   };
+
+  const quantityHandler = (id, type) => {
+    const localCart = JSON.parse(localStorage.getItem("cartdata"));
+
+    let carts = [];
+    const isFoundItem = localCart && localCart.findIndex((p) => p.pk === id);
+    if (type === "increament") {
+      let localProduct = localCart.find((p) => p.pk === id);
+      const total = +localProduct.fields.quantity + 1;
+      console.log(total);
+      carts = localCart;
+      localProduct = {
+        ...localProduct,
+        fields: { ...localProduct.fields, quantity: total },
+      };
+      localCart.splice(isFoundItem, 1);
+      localCart.unshift(localProduct);
+      carts = localCart;
+    }
+    if (type === "decreament") {
+      let localProduct = localCart.find((p) => p.pk === id);
+      const total = +localProduct.fields.quantity - 1;
+      carts = localCart;
+      localProduct = {
+        ...localProduct,
+        fields: { ...localProduct.fields, quantity: total },
+      };
+      if (total) {
+        localCart.splice(isFoundItem, 1);
+        localCart.unshift(localProduct);
+      } else {
+        localCart.splice(isFoundItem, 1);
+        const quantityDisplayer = document.getElementById(`product-${id}`);
+        quantityDisplayer.innerHTML = `<div class="ml-auto" id="product-${id}">
+              <div  onclick=addToCart(${id}) class="itemsquare d-flex justify-content-center align-items-center"  style="height: 30px; width: 30px">
+                <i class="fa fa-cart-plus"></i>
+              </div>
+            </div>`;
+      }
+      carts = localCart;
+    }
+
+    localStorage.setItem("cartdata", JSON.stringify(carts));
+    displayCart(carts);
+  };
+
   const displayCart = (allCart = carts) => {
-    if (allCart) {
+    if (allCart && allCart.length) {
       footerCart.style.display = "flex";
       cartContainer.classList.remove("d-none");
       cartContainer.classList.add("d-flex");
@@ -152,32 +199,60 @@
 
     footerCart.innerHTML = "";
     allCart?.forEach((p, i) => {
+      const quantityDisplayer = document.getElementById(`product-${p.pk}`);
+
+      if (quantityDisplayer)
+        quantityDisplayer.innerHTML = `<div><div class="row delete-contain">
+             <button  onclick='quantityHandler(${
+               p.pk
+             },"decreament")' class="btn  detail-increment-item d-flex justify-content-center align-items-center remove-to-cart-informer">
+                ${
+                  p.fields.quantity === 1
+                    ? '<i class="fa fa-trash-o" aria-hidden="true"></i>'
+                    : '<i class="fa fa-minus" aria-hidden="true"></i>'
+                }
+             </button>
+             <p class="cart-item1 px-sm-2 px-1 px-md-1 px-lg-1 px-xl-3 mb-0">${
+               p.fields.quantity
+             }</p>
+             <button onclick='quantityHandler(${
+               p.pk
+             },"increament")' class="btn  detail-increment-item d-flex justify-content-center align-items-center increment-to-cart-informer">
+                 <i class="fa fa-plus" aria-hidden="true"></i>
+             </button>
+             </div>
+         </div>`;
+
       footerCart.innerHTML += `
-          <div class="footer-square1 mr-3 cart-item-informer animation-element ${
-            i >= 5 ? "d-none" : "d-none d-md-block "
-          }">
-            <div class="footer-circle d-flex justify-content-center align-items-center">
-              <h1 class="footer-cart-item  mb-0 pb-0">${p.fields.quantity}</h1>
-            </div>
-            <div class="d-flex justify-content-center align-items-center ">
-              <img src="/product/${
-                p.fields.image
-              }" class="react-reveal footer-img" alt="footer-img">
-            </div>
-          </div>
-           <div class="footer-square1 mr-3 cart-item-informer animation-element ${
-             i >= 3 ? "d-none" : "d-block d-md-none "
-           }">
-            <div class="footer-circle d-flex justify-content-center align-items-center">
-              <h1 class="footer-cart-item  mb-0 pb-0">1</h1>
-            </div>
-            <div class="d-flex justify-content-center align-items-center ">
-              <img src="/product/${
-                p.fields.image
-              }" class="react-reveal footer-img" alt="footer-img">
-            </div>
-          </div>
-          `;
+             <div class="footer-square1 mr-3 cart-item-informer animation-element ${
+               i >= 5 ? "d-none" : "d-none d-md-block "
+             }">
+               <div class="footer-circle d-flex justify-content-center align-items-center">
+                 <h1 class="footer-cart-item  mb-0 pb-0">${
+                   p.fields.quantity
+                 }</h1>
+               </div>
+               <div class="d-flex justify-content-center align-items-center ">
+                 <img src="/product/${
+                   p.fields.image
+                 }" class="react-reveal footer-img" alt="footer-img">
+               </div>
+             </div>
+              <div class="footer-square1 mr-3 cart-item-informer animation-element ${
+                i >= 3 ? "d-none" : "d-block d-md-none "
+              }">
+               <div class="footer-circle d-flex justify-content-center align-items-center">
+                 <h1 class="footer-cart-item  mb-0 pb-0">${
+                   p.fields.quantity
+                 }</h1>
+               </div>
+               <div class="d-flex justify-content-center align-items-center ">
+                 <img src="/product/${
+                   p.fields.image
+                 }" class="react-reveal footer-img" alt="footer-img">
+               </div>
+             </div>
+             `;
       cartTotalMd.innerText = i >= 5 ? `+${i - 4}` : "";
       cartTotalSm.innerText = i >= 3 ? `+${i - 2}` : "";
     });
