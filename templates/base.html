@@ -19,6 +19,30 @@
     />
 
     <style>
+      .closeCart {
+        border: 0;
+        background: #ff8e00;
+        padding: 0 10px;
+        color: white;
+        box-shadow: 2px 1px 6px 1px #ff8e00;
+      }
+      .hid-box {
+        transition: 1s all;
+        position: fixed;
+        min-height: 100vh;
+        top: 0;
+        box-shadow: 0 8px 32px 0 rgb(31 38 135 / 37%);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: #ffb55882;
+        width: 100%;
+        z-index: 2;
+        transform: translateY(100vh);
+      }
+      button {
+        outline: none !important;
+      }
       body {
         background: #ffd39c73;
       }
@@ -134,6 +158,8 @@
         background: #ffb55882;
         width: 100%;
         z-index: 1;
+        opacity: 1;
+        transition:2s all;
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
@@ -333,7 +359,7 @@
     {% endcomment %}
     <title>Shoppy</title>
   </head>
-  <body>
+  <body id="root">
     <nav class="navbar navbar-light">
       <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="#">
@@ -358,6 +384,13 @@
         </div>
       </div>
     </nav>
+    <div class="hid-box" id="fullCartContainer">
+      <div class="d-flex w-100 justify-content-end">
+        <button class="closeCart" onclick="cartTogglee('translateY(100vh)','flex')">
+          X
+        </button>
+      </div>
+    </div>
     <div class="footer-cart d-none my-2" id="cart-container">
       <div id="footer-cart"></div>
       <div class="d-flex align-items-center justify-content-center">
@@ -366,7 +399,12 @@
       <div class="d-flex align-items-center justify-content-center">
         <h3 class="d-block d-md-none" id="totalCart-sm">+3</h3>
       </div>
-      <button class="ml-auto category cartBtn active-class">Cart</button>
+      <button
+        class="ml-auto category cartBtn active-class"
+        onclick="cartTogglee('translateY(0)','none')"
+      >
+        Cart
+      </button>
     </div>
     {% block container %}{% endblock %}
     <script
@@ -384,6 +422,20 @@
       integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
       crossorigin="anonymous"
     ></script>
+    <script>
+      const cartTogglee = (slide,display) => {
+        const cartC=document.getElementById("cart-container");
+        const bodyElement=document.getElementById("root");
+        if(display==="flex"){
+          cartC.style.opacity="1";
+          bodyElement.style.overflow="auto";
+        }else if(display==="none"){
+          bodyElement.style.overflow="hidden";
+          cartC.style.opacity="0";
+        }
+        document.getElementById("fullCartContainer").style.transform = slide;
+      };
+    </script>
     {% block script %}{% endblock %}
   </body>
 </html>
