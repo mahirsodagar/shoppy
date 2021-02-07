@@ -106,6 +106,22 @@
     {% endfor %}
   </div>
 </div>
+
+<div class="hid-box" id="fullCartContainer">
+  <div
+    class="d-flex w-100 p-2 justify-content-start closeCart align-content-center"
+  >
+    <button
+      class="closeCart pointer"
+      onclick="cartTogglee('translateY(100vh)','flex','close')"
+    >
+      <i class="fa fa-chevron-down"></i>
+    </button>
+    <h3 class="m-0 ml-2 px-1">My Cart</h3>
+  </div>
+  <div class="container" id="fullScreenCart"></div>
+</div>
+
 {%endblock%} {% block script %}
 <script>
   const footerCart = document.getElementById("footer-cart");
@@ -114,6 +130,83 @@
   const cartTotalSm = document.getElementById("totalCart-sm");
   const data = JSON.parse("{{jsonProducts|escapejs}}");
   const carts = JSON.parse(localStorage.getItem("cartdata"));
+
+  const cartTogglee = (slide = false, display = false, type = false) => {
+    const cartC = document.getElementById("cart-container");
+    const bodyElement = document.getElementById("root");
+    const fullScreenCart = document.getElementById("fullCartContainer");
+    const localCart = JSON.parse(localStorage.getItem("cartdata"));
+
+    if (slide) {
+      if (display === "flex") {
+        cartC.style.opacity = "1";
+        bodyElement.style.overflow = "auto";
+      } else if (display === "none") {
+        bodyElement.style.overflow = "hidden";
+        cartC.style.opacity = "0";
+      }
+      fullScreenCart.style.transform = slide;
+    }
+
+    const fullCartConatiner = document.getElementById("fullScreenCart");
+    console.log(fullCartConatiner, "f");
+    fullCartConatiner.innerHTML = "";
+    if (!localCart?.length) {
+      fullCartConatiner.innerHTML = `<div>
+        <h3 class='text-muted text-center p-4'>Cart Is Empty</h3>
+          <button
+            class="m-auto px-2 text-light category cartBtn active-class"
+            onclick="cartTogglee('translateY(100vh)','flex','close')"
+          >
+          Go to Home
+        </button>
+      </div>`;
+    }
+    localCart.forEach((p, i) => {
+      fullCartConatiner.innerHTML += `
+            <div class="cartItemCard my-3 p-1">
+              <div class="d-flex">
+                <div class="cart-img-container d-flex justify-content-center">
+                  <div class="cart-img-container">
+                    <img src="/product/${
+                      p.fields.image
+                    }" class="img-fluid" alt="cart-img">
+                  </div>
+                </div>
+                <div class="ml-3 flex-grow-1">
+                  <div>
+                    <h3 class="cart-item-title">${p.fields.name}</h3>
+                    <div class="d-flex align-item-center justify-content-between">
+                      <h3 class="cart-item-title m-0">₹${p.fields.price}</h3>
+                      <div>
+                        <div class="d-flex delete-contain">
+                           <button  onclick='quantityHandler(${
+                             p.pk
+                           },"decreament","cart")' class="btn  detail-increment-item d-flex justify-content-center align-items-center remove-to-cart-informer">
+                            ${
+                              p.fields.quantity === 1
+                                ? '<i class="fa fa-trash-o" aria-hidden="true"></i>'
+                                : '<i class="fa fa-minus" aria-hidden="true"></i>'
+                            }
+                          </button>
+                          <p class="cart-item1 px-sm-2 px-1 px-md-1 px-lg-1 px-xl-3 mb-0">${
+                            p.fields.quantity
+                          }</p>
+                          <button onclick='quantityHandler(${
+                            p.pk
+                          },"increament","cart")' class="btn  detail-increment-item d-flex justify-content-center align-items-center increment-to-cart-informer">
+                              <i class="fa fa-plus" aria-hidden="true"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+    });
+  };
 
   const addToCart = (id) => {
     const localCart = JSON.parse(localStorage.getItem("cartdata"));
@@ -141,7 +234,7 @@
     displayCart(carts);
   };
 
-  const quantityHandler = (id, type) => {
+  const quantityHandler = (id, type, isCart = false) => {
     const localCart = JSON.parse(localStorage.getItem("cartdata"));
 
     let carts = [];
@@ -149,14 +242,17 @@
     if (type === "increament") {
       let localProduct = localCart.find((p) => p.pk === id);
       const total = +localProduct.fields.quantity + 1;
-      console.log(total);
       carts = localCart;
       localProduct = {
         ...localProduct,
         fields: { ...localProduct.fields, quantity: total },
       };
-      localCart.splice(isFoundItem, 1);
-      localCart.unshift(localProduct);
+      if (!isCart) {
+        localCart.splice(isFoundItem, 1);
+        localCart.unshift(localProduct);
+      } else {
+        localCart[isFoundItem] = localProduct;
+      }
       carts = localCart;
     }
     if (type === "decreament") {
@@ -168,9 +264,13 @@
         fields: { ...localProduct.fields, quantity: total },
       };
       if (total) {
-        localCart.splice(isFoundItem, 1);
-        localCart.unshift(localProduct);
-      } else {
+        if (!isCart) {
+          localCart.splice(isFoundItem, 1);
+          localCart.unshift(localProduct);
+        } else {
+          localCart[isFoundItem] = localProduct;
+        }
+      } else if (!isCart) {
         localCart.splice(isFoundItem, 1);
         const quantityDisplayer = document.getElementById(`product-${id}`);
         quantityDisplayer.innerHTML = `<div class="ml-auto" id="product-${id}">
@@ -178,12 +278,21 @@
                 <i class="fa fa-cart-plus"></i>
               </div>
             </div>`;
+      } else if (!total && isCart) {
+        const quantityDisplayer = document.getElementById(`product-${id}`);
+        quantityDisplayer.innerHTML = `<div class="ml-auto" id="product-${id}">
+              <div  onclick=addToCart(${id}) class="itemsquare d-flex justify-content-center align-items-center"  style="height: 30px; width: 30px">
+                <i class="fa fa-cart-plus"></i>
+              </div>
+            </div>`;
+        localCart.splice(isFoundItem, 1);
       }
       carts = localCart;
     }
 
     localStorage.setItem("cartdata", JSON.stringify(carts));
     displayCart(carts);
+    cartTogglee();
   };
 
   const displayCart = (allCart = carts) => {
@@ -224,7 +333,7 @@
          </div>`;
 
       footerCart.innerHTML += `
-             <div class="footer-square1 mr-3 cart-item-informer animation-element ${
+             <div class="footer-square1 mr-3 cart-item-informer ${
                i >= 5 ? "d-none" : "d-none d-md-block "
              }">
                <div class="footer-circle d-flex justify-content-center align-items-center">
@@ -238,7 +347,7 @@
                  }" class="react-reveal footer-img" alt="footer-img">
                </div>
              </div>
-              <div class="footer-square1 mr-3 cart-item-informer animation-element ${
+              <div class="footer-square1 mr-3 cart-item-informer ${
                 i >= 3 ? "d-none" : "d-block d-md-none "
               }">
                <div class="footer-circle d-flex justify-content-center align-items-center">

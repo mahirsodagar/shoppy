@@ -19,27 +19,49 @@
     />
 
     <style>
+      .pointer {
+        cursor: pointer !important;
+      }
       .closeCart {
         border: 0;
         background: #ff8e00;
         padding: 0 10px;
         color: white;
-        box-shadow: 2px 1px 6px 1px #ff8e00;
+        position: sticky;
+        top: 0;
+        z-index: 3;
       }
       .hid-box {
         transition: 1s all;
         position: fixed;
+        height: 100vh;
+        overflow: auto;
         min-height: 100vh;
         top: 0;
         box-shadow: 0 8px 32px 0 rgb(31 38 135 / 37%);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.18);
-        background: #ffb55882;
         width: 100%;
         z-index: 2;
         transform: translateY(100vh);
+        background: #ffebd2;
       }
+
+      .cart-img-container {
+        height: 100px;
+        width: 100px;
+      }
+      .cart-img-container > img {
+        height: -webkit-fill-available !important;
+      }
+      .cart-item-title {
+        font-size: 20px;
+      }
+      .cartItemCard {
+        border: 1px solid #e1cfba;
+        background: #ecc4934f;
+        box-shadow: 0px 0px 6px 1px #0d0d0d38;
+      }
+
       button {
         outline: none !important;
       }
@@ -159,7 +181,7 @@
         width: 100%;
         z-index: 1;
         opacity: 1;
-        transition:2s all;
+        transition: 2s all;
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
@@ -351,6 +373,19 @@
           border-top-right-radius: 30px;
           border-top-left-radius: 30px;
         }
+        .cart-img-container {
+          height: 60px;
+          width: 60px;
+        }
+        .cart-item-title {
+          font-size: 14px;
+        }
+      }
+      @media (max-width: 375px) {
+        .cart-img-container {
+          height: 45px;
+          width: 45px;
+        }
       }
     </style>
     <link rel="icon" href="static/assets/favicon.jpg" type="image/icon type" />
@@ -384,13 +419,6 @@
         </div>
       </div>
     </nav>
-    <div class="hid-box" id="fullCartContainer">
-      <div class="d-flex w-100 justify-content-end">
-        <button class="closeCart" onclick="cartTogglee('translateY(100vh)','flex')">
-          X
-        </button>
-      </div>
-    </div>
     <div class="footer-cart d-none my-2" id="cart-container">
       <div id="footer-cart"></div>
       <div class="d-flex align-items-center justify-content-center">
@@ -401,7 +429,7 @@
       </div>
       <button
         class="ml-auto category cartBtn active-class"
-        onclick="cartTogglee('translateY(0)','none')"
+        onclick="cartTogglee('translateY(0)','none','opener')"
       >
         Cart
       </button>
@@ -422,20 +450,6 @@
       integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
       crossorigin="anonymous"
     ></script>
-    <script>
-      const cartTogglee = (slide,display) => {
-        const cartC=document.getElementById("cart-container");
-        const bodyElement=document.getElementById("root");
-        if(display==="flex"){
-          cartC.style.opacity="1";
-          bodyElement.style.overflow="auto";
-        }else if(display==="none"){
-          bodyElement.style.overflow="hidden";
-          cartC.style.opacity="0";
-        }
-        document.getElementById("fullCartContainer").style.transform = slide;
-      };
-    </script>
     {% block script %}{% endblock %}
   </body>
 </html>
