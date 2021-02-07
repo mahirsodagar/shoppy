@@ -280,11 +280,14 @@
             </div>`;
       } else if (!total && isCart) {
         const quantityDisplayer = document.getElementById(`product-${id}`);
+        if(quantityDisplayer)
+        {
         quantityDisplayer.innerHTML = `<div class="ml-auto" id="product-${id}">
               <div  onclick=addToCart(${id}) class="itemsquare d-flex justify-content-center align-items-center"  style="height: 30px; width: 30px">
                 <i class="fa fa-cart-plus"></i>
               </div>
             </div>`;
+        }
         localCart.splice(isFoundItem, 1);
       }
       carts = localCart;
